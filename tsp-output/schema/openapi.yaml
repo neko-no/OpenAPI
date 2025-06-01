@@ -1,0 +1,101 @@
+openapi: 3.1.0
+info:
+  title: Notification API
+  version: 0.0.0
+tags: []
+paths:
+  /api/notifications:
+    get:
+      operationId: NotificationsAPI_listNotifications
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notifications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notifications.Notification'
+                required:
+                  - notifications
+  /api/notifications/{notificationId}:
+    get:
+      operationId: NotificationsAPI_getNotification
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notification:
+                    $ref: '#/components/schemas/Notifications.Notification'
+                required:
+                  - notification
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+components:
+  schemas:
+    NotFoundError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum:
+            - NOT_FOUND
+        message:
+          type: string
+    Notifications.Notification:
+      type: object
+      required:
+        - id
+        - title
+        - content
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        sentAt:
+          type: string
+          format: date-time
+    ValidationError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          enum:
+            - VALIDATION_ERROR
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+servers:
+  - url: https://api.example.com
+    description: 本番サーバー
+    variables: {}
